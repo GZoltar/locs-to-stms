@@ -1,5 +1,7 @@
 # Java lines of code to Java statements
 
+[![Build Status](https://travis-ci.org/GZoltar/locs-to-stms.svg?branch=master)](https://travis-ci.org/GZoltar/locs-to-stms)
+
 `locs-to-stms` is an utility Java program that parses java files to extract
 the set of lines of code that are part of the same Java statement.
 
