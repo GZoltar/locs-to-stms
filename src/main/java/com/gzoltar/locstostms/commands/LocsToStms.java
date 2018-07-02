@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.Set;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParserConfiguration.LanguageLevel;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
@@ -56,6 +58,12 @@ public class LocsToStms extends Command {
   private File outputFile = new File("locstostms.txt");
 
   private final Map<Integer, Set<Integer>> javaStatements = new HashMap<Integer, Set<Integer>>();
+
+  private final static List<LanguageLevel> languageLevels =
+      Arrays.asList(LanguageLevel.JAVA_11_PREVIEW, LanguageLevel.JAVA_10, LanguageLevel.JAVA_9,
+          LanguageLevel.JAVA_8, LanguageLevel.JAVA_7, LanguageLevel.JAVA_6, LanguageLevel.JAVA_5,
+          LanguageLevel.JAVA_1_4, LanguageLevel.JAVA_1_3, LanguageLevel.JAVA_1_2,
+          LanguageLevel.JAVA_1_1, LanguageLevel.JAVA_1_0);
 
   /**
    * {@inheritDoc}
@@ -160,19 +168,33 @@ public class LocsToStms extends Command {
    * @throws Exception
    */
   protected void parse(final File javaFile) throws Exception {
-    // creates an input stream for the file to be parsed
-    InputStream in = new FileInputStream(javaFile);
+    CompilationUnit compilationUnit = null;
 
-    CompilationUnit compilationUnit;
-    try {
-      // parse the file
-      compilationUnit = JavaParser.parse(in);
-    } finally {
-      in.close();
+    for (LanguageLevel languageLevel : languageLevels) {
+      try {
+        // Creates an input stream per each invocation of parse. It seems JavaParser.parse requires
+        // a new instance of the input stream for every single languageLevel
+        InputStream in = new FileInputStream(javaFile);
+
+        // parse the file
+        JavaParser.getStaticConfiguration().setLanguageLevel(languageLevel);
+        compilationUnit = JavaParser.parse(in);
+
+        // release
+        in.close();
+
+        // explore tree
+        this.explore(compilationUnit);
+        break;
+      } catch (Exception e) {
+        continue;
+      }
     }
 
-    // explore tree
-    this.explore(compilationUnit);
+    if (compilationUnit == null) {
+      throw new NullPointerException(
+          "Parser was not able to parse '" + javaFile.getAbsolutePath() + "'!");
+    }
   }
 
   private void explore(final Node node) {
@@ -185,26 +207,27 @@ public class LocsToStms extends Command {
       return;
     }
 
-    if (node.getChildrenNodes().isEmpty()) {
-      Integer line_number = node.getParentNode().getBeginLine();
+    if (node.getChildNodes().isEmpty()) {
+      Integer line_number = node.getParentNode().get().getBegin().get().line;
 
       // is it a statement?
       if (node.getClass().getCanonicalName().startsWith("com.github.javaparser.ast.stmt.")
-          && node.getBeginLine() == node.getEndLine()) {
-        line_number = node.getBeginLine();
-      } else if (node.getParentNode().getBeginLine() == node.getParentNode().getEndLine()) {
+          && node.getBegin().get().line == node.getEnd().get().line) {
+        line_number = node.getBegin().get().line;
+      } else if (node.getParentNodeForChildren().getBegin().get().line == node
+          .getParentNodeForChildren().getEnd().get().line) {
         Node clone = node;
         Node parent = null;
 
         // to handle special cases: parameters, binary expressions, etc
         // search for the next 'Declaration' or 'Statement'
-        while ((parent = clone.getParentNode()) != null) {
+        while ((parent = clone.getParentNode().orElse(null)) != null) {
           if ((parent.getClass().getCanonicalName().startsWith("com.github.javaparser.ast.stmt."))
               || (parent.getClass().getCanonicalName()
                   .equals(VariableDeclarator.class.getCanonicalName()))
               || (parent.getClass().getCanonicalName().startsWith("com.github.javaparser.ast.body.")
                   && parent.getClass().getCanonicalName().endsWith("Declaration"))) {
-            line_number = parent.getBeginLine();
+            line_number = parent.getBegin().get().line;
             break;
           }
 
@@ -221,10 +244,10 @@ public class LocsToStms extends Command {
         lines.add(line_number);
       }
 
-      lines.add(node.getBeginLine());
+      lines.add(node.getBegin().get().line);
       this.javaStatements.put(line_number, lines);
     } else {
-      for (Node child : node.getChildrenNodes()) {
+      for (Node child : node.getChildNodes()) {
         this.explore(child);
       }
     }

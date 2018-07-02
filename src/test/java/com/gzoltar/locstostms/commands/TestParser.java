@@ -49,7 +49,11 @@ public class TestParser {
   @Test
   public void testFields() throws Exception {
     Map<Integer, Set<Integer>> stms = this.run("examples/Fields.java");
-    assertEquals(3, stms.size());
+    assertEquals(4, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
 
     Set<Integer> stms_of_line_2 = stms.get(2);
     assertEquals(4, stms_of_line_2.size());
@@ -71,7 +75,11 @@ public class TestParser {
   @Test
   public void testMethodArguments() throws Exception {
     Map<Integer, Set<Integer>> stms = this.run("examples/MethodArguments.java");
-    assertEquals(1, stms.size());
+    assertEquals(2, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
 
     Set<Integer> stms_of_line_2 = stms.get(2);
     assertEquals(2, stms_of_line_2.size());
@@ -82,18 +90,42 @@ public class TestParser {
   @Test
   public void testIfCondition() throws Exception {
     Map<Integer, Set<Integer>> stms = this.run("examples/IfCondition.java");
-    assertEquals(4, stms.size());
+    assertEquals(5, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
+
+    Set<Integer> stms_of_line_2 = stms.get(2);
+    assertEquals(1, stms_of_line_2.size());
+    assertTrue(stms_of_line_2.contains(2));
 
     Set<Integer> stms_of_line_3 = stms.get(3);
     assertEquals(2, stms_of_line_3.size());
     assertTrue(stms_of_line_3.contains(3));
     assertTrue(stms_of_line_3.contains(4));
+
+    Set<Integer> stms_of_line_5 = stms.get(5);
+    assertEquals(1, stms_of_line_5.size());
+    assertTrue(stms_of_line_5.contains(5));
+
+    Set<Integer> stms_of_line_7 = stms.get(7);
+    assertEquals(1, stms_of_line_7.size());
+    assertTrue(stms_of_line_7.contains(7));
   }
 
   @Test
   public void testForLoop() throws Exception {
     Map<Integer, Set<Integer>> stms = this.run("examples/ForLoop.java");
-    assertEquals(2, stms.size());
+    assertEquals(3, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
+
+    Set<Integer> stms_of_line_2 = stms.get(2);
+    assertEquals(1, stms_of_line_2.size());
+    assertTrue(stms_of_line_2.contains(2));
 
     Set<Integer> stms_of_line_3 = stms.get(3);
     assertEquals(3, stms_of_line_3.size());
@@ -105,7 +137,15 @@ public class TestParser {
   @Test
   public void testWhileLoop() throws Exception {
     Map<Integer, Set<Integer>> stms = this.run("examples/WhileLoop.java");
-    assertEquals(2, stms.size());
+    assertEquals(3, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
+
+    Set<Integer> stms_of_line_2 = stms.get(2);
+    assertEquals(1, stms_of_line_2.size());
+    assertTrue(stms_of_line_2.contains(2));
 
     Set<Integer> stms_of_line_3 = stms.get(3);
     assertEquals(2, stms_of_line_3.size());
@@ -116,13 +156,21 @@ public class TestParser {
   @Test
   public void testComments() throws Exception {
     Map<Integer, Set<Integer>> stms = this.run("examples/Comments.java");
-    assertEquals(0, stms.size());
+    assertEquals(1, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
   }
 
   @Test
   public void testEnumDeclaration() throws Exception {
     Map<Integer, Set<Integer>> stms = this.run("examples/EnumDeclaration.java");
-    assertEquals(4, stms.size());
+    assertEquals(5, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
 
     Set<Integer> stms_of_line_12 = stms.get(12);
     assertEquals(2, stms_of_line_12.size());
@@ -146,7 +194,11 @@ public class TestParser {
   @Test
   public void testAnnotations() throws Exception {
     Map<Integer, Set<Integer>> stms = this.run("examples/Annotation.java");
-    assertEquals(2, stms.size());
+    assertEquals(3, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
 
     Set<Integer> stms_of_line_3 = stms.get(3);
     assertEquals(2, stms_of_line_3.size());
@@ -156,5 +208,25 @@ public class TestParser {
     Set<Integer> stms_of_line_5 = stms.get(5);
     assertEquals(1, stms_of_line_5.size());
     assertTrue(stms_of_line_5.contains(5));
+  }
+
+  @Test
+  public void testPackageWithKeyword() throws Exception {
+    Map<Integer, Set<Integer>> stms = this.run("examples/PackageWithKeyword.java");
+    assertEquals(3, stms.size());
+
+    Set<Integer> stms_of_line_1 = stms.get(1);
+    assertEquals(1, stms_of_line_1.size());
+    assertTrue(stms_of_line_1.contains(1));
+
+    Set<Integer> stms_of_line_3 = stms.get(3);
+    assertEquals(1, stms_of_line_3.size());
+    assertTrue(stms_of_line_3.contains(3));
+
+    Set<Integer> stms_of_line_5 = stms.get(5);
+    assertEquals(3, stms_of_line_5.size());
+    assertTrue(stms_of_line_5.contains(5));
+    assertTrue(stms_of_line_5.contains(6));
+    assertTrue(stms_of_line_5.contains(7));
   }
 }
