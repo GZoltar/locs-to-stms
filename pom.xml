@@ -21,7 +21,7 @@
   <groupId>com.gzoltar</groupId>
   <artifactId>locs-to-stms</artifactId>
   <packaging>jar</packaging>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
 
   <name>locs-to-stms</name>
   <description>locs-to-stms -Lines of code to Java statements</description>
