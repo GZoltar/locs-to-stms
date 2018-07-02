@@ -1,6 +1,6 @@
 package com.gzoltar.locstostms.commands;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.gzoltar.locstostms.Command;
 
@@ -17,9 +17,7 @@ public final class Commands {
    * @return list of new instances of all available commands
    */
   public static List<Command> get() {
-    List<Command> commands = new ArrayList<Command>();
-    commands.add(new Version());
-    return commands;
+    return Arrays.asList(new Version(), new LocsToStms());
   }
 
   /**

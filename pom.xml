@@ -44,6 +44,11 @@
       <artifactId>args4j</artifactId>
       <version>2.33</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.javaparser</groupId>
+      <artifactId>javaparser-core</artifactId>
+      <version>2.4.0</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -76,6 +81,10 @@
                 <relocation>
                   <pattern>org.kohsuke.args4j</pattern>
                   <shadedPattern>com.gzoltar.internal.org.kohsuke.args4j</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.github.javaparser</pattern>
+                  <shadedPattern>com.gzoltar.internal.com.github.javaparser</shadedPattern>
                 </relocation>
               </relocations>
               <transformers>
